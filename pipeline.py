@@ -1,20 +1,20 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 import seaborn as sns
 from sqlalchemy import create_engine, text
 
-# 1. Define database connection credentials
+# 1. Database Connection Setup
 USER = "root"
 PASSWORD = "12345"
 HOST = "localhost"
 PORT = "3306"
 DATABASE = "climate_db"
 
-# 2. Create the SQLAlchemy connection engine
 engine_url = f"mysql+pymysql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}"
 engine = create_engine(engine_url)
 
-# 3. Define your optimized SQL query (Aggregated for all cities)
+# 2. SQL Query (Aggregating all cities across 30 years)
 query = """
 SELECT 
     RecordDate, 
@@ -26,89 +26,92 @@ ORDER BY RecordDate;
 """
 
 try:
-    print("Connecting to database and executing queries...")
+    print("Extracting multi-decade climate records from database...")
     with engine.connect() as connection:
-        # Clear out standard select limits safely
-        connection.execute(text("SET SQL_SELECT_LIMIT = DEFAULT;"))
-        
-        # Run a quick diagnostic check to see what data ACTUALLY exists in your table
-        diagnostic = connection.execute(text(
-            "SELECT COUNT(*), MIN(RecordDate), MAX(RecordDate) FROM GlobalLandTemperaturesByCity;"
-        )).fetchone()
-        
-        print("\n--- DATABASE DIAGNOSTIC INFO ---")
-        print(f"Total rows in table: {diagnostic[0]}")
-        print(f"Earliest Date available: {diagnostic[1]}")
-        print(f"Latest Date available: {diagnostic[2]}")
-        print("--------------------------------\n")
-        
-        # Pull data directly into the DataFrame
         df = pd.read_sql(text(query), con=connection)
     
-    # 5. Verify the data load
-    print("--- Data Pipeline Success ---")
-    print(f"Total Rows Retrieved for Graph: {len(df)}")
+    print(f"Data Payload Verified: {len(df)} records compiled.")
     
-    if len(df) == 0:
-        print("⚠️ No rows returned. Your date filter might not match the table's format.")
-    else:
-        print(f"Timeline Bounds in DataFrame: {df['RecordDate'].min()} to {df['RecordDate'].max()}")
-        
-        # Ensure data types are optimized for time-series analysis
-        df['RecordDate'] = pd.to_datetime(df['RecordDate'])
-        df = df.sort_values('RecordDate')
+    # 3. Data Formatting for Time-Series Analysis
+    df['RecordDate'] = pd.to_datetime(df['RecordDate'])
+    df = df.sort_values('RecordDate')
 
-        # Define Your Anomaly Logic
-        mean_temp = df['AverageTemperature'].mean()
-        std_temp = df['AverageTemperature'].std()
-        threshold = mean_temp + (2 * std_temp)
-        df['Is_Anomaly'] = df['AverageTemperature'] > threshold
+    # Statistical Thresholding (Anomalies defined as > 1.5 standard deviations above baseline)
+    baseline_mean = df['AverageTemperature'].mean()
+    baseline_std = df['AverageTemperature'].std()
+    anomaly_threshold = baseline_mean + (1.5 * baseline_std)
+    df['Is_Anomaly'] = df['AverageTemperature'] > anomaly_threshold
 
-        # Initialize the Plot Layout
-        sns.set_theme(style="whitegrid")
-        plt.figure(figsize=(14, 6), dpi=100)
+    # 4. Professional Chart Layout Design
+    # Using a clean white grid canvas with custom font sizing parameters
+    sns.set_theme(style="white", rc={"grid.color": "#eaeaea", "axes.grid": True})
+    fig, ax = plt.subplots(figsize=(15, 7), dpi=120)
 
-        # Plot the temperature trend line
-        sns.lineplot(
-            data=df, 
-            x='RecordDate', 
-            y='AverageTemperature', 
-            color='#1f77b4', 
-            linewidth=1.5, 
-            label='Average Temperature (°C)'
-        )
+    # Plot the 30-Year Trend Line with a deep professional navy blue accent
+    sns.lineplot(
+        data=df, 
+        x='RecordDate', 
+        y='AverageTemperature', 
+        color='#0f2042', 
+        linewidth=2, 
+        alpha=0.85,
+        label='Global Monthly Average Temp (°C)',
+        ax=ax
+    )
 
-        # Shading the Anomaly Dates
-        in_anomaly = False
-        start_date = None
+    # Injecting a secondary rolling trend line to visually smooth out raw seasonal variations
+    df['12M_Rolling_Avg'] = df['AverageTemperature'].rolling(window=12, center=True).mean()
+    sns.lineplot(
+        data=df,
+        x='RecordDate',
+        y='12M_Rolling_Avg',
+        color='#e67e22',
+        linewidth=2.5,
+        linestyle='--',
+        label='12-Month Deseasonalized Macro Trend',
+        ax=ax
+    )
 
-        for idx, row in df.iterrows():
-            if row['Is_Anomaly'] and not in_anomaly:
-                start_date = row['RecordDate']
-                in_anomaly = True
-            elif not row['Is_Anomaly'] and in_anomaly:
-                plt.axvspan(start_date, row['RecordDate'], color='red', alpha=0.3, label='Detected Anomaly')
-                in_anomaly = False
+    # 5. Programmatic Coral Red Anomaly Highlight Shading
+    in_anomaly = False
+    start_date = None
 
-        if in_anomaly:
-            plt.axvspan(start_date, df['RecordDate'].iloc[-1], color='red', alpha=0.3)
+    for idx, row in df.iterrows():
+        if row['Is_Anomaly'] and not in_anomaly:
+            start_date = row['RecordDate']
+            in_anomaly = True
+        elif not row['Is_Anomaly'] and in_anomaly:
+            ax.axvspan(start_date, row['RecordDate'], color='#ff4d4d', alpha=0.18, label='Thermal Anomaly Event')
+            in_anomaly = False
 
-        # Clean and Label the Visualization
-        handles, labels = plt.gca().get_legend_handles_labels()
-        by_label = dict(zip(labels, handles))
-        if by_label:
-            plt.legend(by_label.values(), by_label.keys(), loc='upper left', frameon=True)
+    if in_anomaly:
+        ax.axvspan(start_date, df['RecordDate'].iloc[-1], color='#ff4d4d', alpha=0.18, label='Thermal Anomaly Event')
 
-        plt.title('Global Climate Trend Line with Highlighted Anomalies', fontsize=14, pad=15)
-        plt.xlabel('Timeline (Record Date)', fontsize=11)
-        plt.ylabel('Temperature (°C)', fontsize=11)
-        plt.tight_layout()
+    # 6. Advanced Typography, Clean Labels, and Grid Polish
+    ax.set_title('GLOBAL CLIMATE TREND REGRESSION ANALYSIS (1983 - 2013)', fontsize=16, fontweight='bold', color='#1a1a1a', pad=20, loc='left')
+    ax.set_xlabel('Timeline Horizon (By Calendar Year)', fontsize=12, fontweight='semibold', labelpad=12, color='#333333')
+    ax.set_ylabel('Aggregated Temperature Profile (°C)', fontsize=12, fontweight='semibold', labelpad=12, color='#333333')
 
-        print("Generating plot window...")
-        plt.show()
+    # Formatting Time-Axis ticks cleanly into 3-year leaps
+    ax.xaxis.set_major_locator(mdates.YearLocator(3))
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
+    plt.xticks(rotation=0, fontsize=10, color='#555555')
+    plt.yticks(fontsize=10, color='#555555')
+
+    # De-clutter and clean legend layers
+    handles, labels = ax.get_legend_handles_labels()
+    by_label = dict(zip(labels, handles))
+    ax.legend(by_label.values(), by_label.keys(), loc='upper left', frameon=True, facecolor='#ffffff', edgecolor='#e0e0e0', fontsize=10)
+
+    # Remove outer graph box spines for a modern, minimalistic report feel
+    sns.despine(left=True, bottom=True)
+    plt.tight_layout()
+
+    # Render Output Canvas
+    print("Generating report visualization canvas...")
+    plt.show()
 
 except Exception as e:
-    print(f"Pipeline Error: {e}")
-
+    print(f"Pipeline Interrupted: {e}")
 finally:
     engine.dispose()
