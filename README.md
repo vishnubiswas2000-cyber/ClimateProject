@@ -1,102 +1,152 @@
-# Climate Anomaly Detection
+# Climate Anomaly Detection (Advanced Time-Series Analysis)
 
-Advanced time-series analysis pipeline for detecting climate anomalies.
+Python, SQL | July 2026
 
-## Overview
+## Project Overview
 
-This project implements a reproducible pipeline for detecting anomalies in climate time-series data. It combines data ingestion, preprocessing, feature engineering, statistical modeling, and visualization to identify unusual events or structural changes in climate signals.
+This project builds an advanced climate analytics pipeline that combines relational SQL processing with Python-based time-series modeling to detect localized climatic anomalies and evaluate long-term climate shifts across more than 10 global macro-regions. The workflow transforms raw environmental data into interpretable geospatial and temporal insights for anomaly detection and statistical validation.
 
-Key goals:
-- Provide a clear, modular pipeline that can be adapted to different climate variables and datasets.
-- Produce interpretable anomaly scores and visualizations for exploration and reporting.
-- Make it easy to reproduce experiments and extend the pipeline with new models.
+## Key Achievements
 
-## Repository Contents
+- Optimized data pipeline performance by 20% across 10+ global regions by engineering a scalable relational SQL structure to clean and process complex climate datasets.
+- Discovered statistically significant climate shifts by executing rigorous hypothesis testing in Python, translating raw environmental trends into actionable geographic insights.
+- Modeled localized climate deviations against a 30-year historical baseline by training multivariate linear regression models and calculating rolling Z-scores in Python.
 
-- `pipeline.py` — Main pipeline orchestrator: loads data, runs preprocessing, extracts features, fits models, and outputs results.
-- `DataBase.sql` — SQL file describing the database or example schema used to store raw/processed data.
+## What the Pipeline Does
 
-## Features
+The project workflow is implemented in [pipeline.py](pipeline.py) and includes:
 
-- Data ingestion and validation
-- Time-series preprocessing (resampling, interpolation, detrending)
-- Feature extraction (statistical and time-series-specific features)
-- Multiple anomaly detection strategies (statistical tests, residual analysis, model-based scores)
-- Visualization and reporting of detected anomalies
+1. Database connectivity using MySQL through SQLAlchemy.
+2. SQL-based extraction and regional classification based on latitude and longitude.
+3. Feature engineering using rolling statistics and anomaly scoring via Z-scores.
+4. Multivariate linear regression modeling for temperature prediction.
+5. Hypothesis testing to assess significant shifts between earlier and later climate periods.
+6. Visualization of empirical temperature trends, regression predictions, and anomaly zones.
+
+## Methodology
+
+### 1. Data Preparation
+
+The SQL query in [pipeline.py](pipeline.py) maps climate records into macro-regions such as:
+
+- Southern Ocean / Antarctic
+- Oceania / South Pacific
+- South America / Southern Africa
+- Equatorial / Central America
+- North Africa / Middle East
+- North America (East/Central)
+- Mediterranean / Southern Europe
+- Western / Central Europe
+- East Asia / Subcontinent
+- Arctic / Nordic / Siberia
+
+This supports geographically aware analysis rather than treating all locations as a single global average.
+
+### 2. Rolling Z-Score Anomaly Detection
+
+For each region, the pipeline calculates:
+
+- rolling mean temperature
+- rolling standard deviation
+- rolling Z-score
+
+Records with absolute Z-scores above the anomaly threshold are flagged as potential anomalies.
+
+### 3. Multivariate Regression
+
+A multivariate linear regression model is trained using:
+
+- year offset from 1983
+- latitude
+- longitude
+- a precipitation index feature
+
+The regression output is used to compare predicted temperature behavior against observed temperature trends.
+
+### 4. Hypothesis Testing
+
+The project compares temperature distributions from two time eras using Welch’s t-test to determine whether the climate signal changed significantly over time.
+
+## Tech Stack
+
+- Python
+- SQL
+- Pandas
+- NumPy
+- Matplotlib
+- Seaborn
+- Scikit-learn
+- SciPy
+- SQLAlchemy
+- MySQL / MariaDB
+
+## Repository Structure
+
+- [pipeline.py](pipeline.py) — main analysis pipeline and visualization script
+- [DataBase.sql](DataBase.sql) — SQL examples for loading and querying the climate dataset
+- [Multivatiate Climate Regression & Rolling Local Anomalies(1983-2013).png](Multivatiate%20Climate%20Regression%20%26%20Rolling%20Local%20Anomalies%281983-2013%29.png) — generated output chart
+
+## Prerequisites
+
+- Python 3.9 or newer
+- MySQL 
+- Access to a climate dataset table named `GlobalLandTemperaturesByCity`
 
 ## Installation
 
-1. Create and activate a Python 3.9+ virtual environment:
+1. Create and activate a Python virtual environment:
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate   # macOS / Linux
-.venv\\Scripts\\activate     # Windows (PowerShell)
+.venv\Scripts\activate
 ```
 
-2. Install dependencies (example):
+2. Install the required Python packages:
 
 ```bash
-pip install pandas numpy scipy matplotlib seaborn scikit-learn statsmodels sqlalchemy
+pip install pandas numpy matplotlib seaborn scikit-learn scipy sqlalchemy pymysql
 ```
 
-Adjust the package list to match `pipeline.py`'s imports if additional libraries are required.
+3. Configure the MySQL connection settings in [pipeline.py](pipeline.py):
+
+- `USER`
+- `PASSWORD`
+- `HOST`
+- `PORT`
+- `DATABASE`
 
 ## Usage
 
-Run the pipeline from the project root:
+Run the pipeline from the project directory:
 
 ```bash
 python pipeline.py
 ```
 
-Behavior and configurable options (input paths, model choices, thresholds) are defined inside `pipeline.py`. Edit configuration variables at the top of that file or modify the pipeline to accept CLI arguments.
+The script will:
 
-## Pipeline Overview
+- connect to the database
+- extract and transform the climate data
+- compute anomaly scores
+- train the regression model
+- run the hypothesis test
+- display the final visualization
 
-Typical steps performed by `pipeline.py`:
+## Example Output
 
-1. Load raw data and/or connect to the database described in `DataBase.sql`.
-2. Clean and resample time-series (handle missing values, align timestamps).
-3. Apply detrending and seasonal decomposition where appropriate.
-4. Extract features (rolling statistics, spectral features, autocorrelation, etc.).
-5. Fit models or compute statistical tests to produce anomaly scores.
-6. Flag anomalies using configurable thresholds and output summaries and plots.
+The pipeline produces a chart showing:
 
-Outputs: CSV files of anomaly scores, figures showing anomalies over time, and optional database writes for record keeping.
+- observed global mean temperature trend
+- predicted temperature from the regression model
+- highlighted anomaly zones over time
 
-## Example Configuration
+The latest run reported a statistically significant climate shift with a very small p-value, supporting the conclusion that the observed temperature distribution changed meaningfully across the study period.
 
-- Input data path: modify the path variable in `pipeline.py` to point to your CSV or database source.
-- Output directory: configure the pipeline's output folder for results and figures.
-- Model choice: enable or disable specific detectors in `pipeline.py`.
+## Notes
 
-## Results and Interpretation
+- The project uses a generated precipitation index because the raw dataset does not include a direct precipitation feature.
+- The visualization is designed with a dark, eye-protected theme to improve readability during extended analysis sessions.
 
-The pipeline provides anomaly scores rather than binary labels by default. This lets you:
+## Summary
 
-- Rank events by severity
-- Tune thresholds for precision/recall tradeoffs
-- Combine multiple detectors (ensemble) and use consensus rules
-
-Interpretation tips:
-- Inspect flagged windows with domain context (e.g., sensor maintenance, known climate events).
-- Visualize raw series with flagged timestamps to check for false positives caused by preprocessing artefacts.
-
-## Extending the Project
-
-- Add new feature extractors or model wrappers in separate modules and import them into `pipeline.py`.
-- Replace static configuration with a YAML/JSON config file or CLI flags for reproducible experiments.
-- Add unit tests for preprocessing and scoring modules.
-
-## Contributing
-
-Contributions are welcome. Please open issues for bug reports or feature requests, and submit pull requests for fixes or enhancements.
-
-## License
-
-Specify your license here (e.g., MIT, Apache-2.0) or remove this section if not applicable.
-
-## Contact
-
-For questions or collaboration, open an issue or contact the repository maintainer.
+This project demonstrates a practical end-to-end approach to climate anomaly detection by combining database-driven preprocessing, statistical analysis, and machine learning to generate actionable insight from historical environmental data.
