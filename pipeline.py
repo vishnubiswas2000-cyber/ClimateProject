@@ -38,7 +38,7 @@ SELECT
     CAST(SUBSTRING_INDEX(Latitude, IF(Latitude LIKE '%N', 'N', 'S'), 1) AS DECIMAL) * IF(Latitude LIKE '%N', 1, -1) AS LatitudeNumeric,
     CAST(SUBSTRING_INDEX(Longitude, IF(Longitude LIKE '%E', 'E', 'W'), 1) AS DECIMAL) * IF(Longitude LIKE '%E', 1, -1) AS LongitudeNumeric
 FROM GlobalLandTemperaturesByCity
-WHERE RecordDate BETWEEN '1983-01-01' AND '2013-12-31'
+WHERE RecordDate BETWEEN '1982-01-01' AND '2012-12-31'
   AND AverageTemperature IS NOT NULL
 ORDER BY RegionName, RecordDate;
 """
@@ -71,7 +71,7 @@ try:
     # ALGORITHM 2: MULTIVARIATE LINEAR REGRESSION
     # ==========================================
     print("Training Multivariate Linear Regression models...")
-    df['Year_Delta'] = df['RecordDate'].dt.year - 1983
+    df['Year_Delta'] = df['RecordDate'].dt.year - 1982
     X = df[['Year_Delta', 'LatitudeNumeric', 'LongitudeNumeric', 'PrecipitationIndex']].fillna(0)
     y = df['AverageTemperature']
     
@@ -144,7 +144,7 @@ try:
             in_anomaly = False
 
     # Advanced Dark Mode Typography 
-    ax.set_title('MULTIVARIATE CLIMATE REGRESSION & ROLLING LOCAL ANOMALIES (1983 - 2013)', 
+    ax.set_title('MULTIVARIATE CLIMATE REGRESSION & ROLLING LOCAL ANOMALIES (1982 - 2012)', 
                  fontsize=15, fontweight='bold', color='#ffffff', pad=22, loc='left')
     ax.set_xlabel('Temporal Horizon (By Calendar Year)', fontsize=11, fontweight='semibold', labelpad=12, color=TEXT_COLOR)
     ax.set_ylabel('Calculated Temperature Profiles (°C)', fontsize=11, fontweight='semibold', labelpad=12, color=TEXT_COLOR)
