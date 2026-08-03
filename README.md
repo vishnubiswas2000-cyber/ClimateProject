@@ -56,7 +56,7 @@ Records with absolute Z-scores above the anomaly threshold are flagged as potent
 
 A multivariate linear regression model is trained using:
 
-- year offset from 1983
+- year offset from 1982
 - latitude
 - longitude
 - a precipitation index feature
