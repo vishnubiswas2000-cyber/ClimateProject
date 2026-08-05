@@ -84,7 +84,7 @@ The project compares temperature distributions from two time eras using Welch’
 
 - [pipeline.py](pipeline.py) — main analysis pipeline and visualization script
 - [DataBase.sql](DataBase.sql) — SQL examples for loading and querying the climate dataset
-- [Multivatiate Climate Regression & Rolling Local Anomalies(1983-2013).png](Multivatiate%20Climate%20Regression%20%26%20Rolling%20Local%20Anomalies%281983-2013%29.png) — generated output chart
+- [Multivatiate Climate Regression & Rolling Local Anomalies(1982-2012).png](Multivatiate%20Climate%20Regression%20%26%20Rolling%20Local%20Anomalies%281982-2012%29.png) — generated output chart
 
 ## Prerequisites
 
