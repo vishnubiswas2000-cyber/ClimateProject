@@ -142,6 +142,18 @@ The pipeline produces a chart showing:
 
 The latest run reported a statistically significant climate shift with a very small p-value, supporting the conclusion that the observed temperature distribution changed meaningfully across the study period.
 
+## 1. Story from the Chart
+
+The chart titled **Multivatiate Climate Regression & Rolling Local Anomalies (1982-2012)** tells a story of persistent warming alongside region-specific deviations. The multivariate regression line captures the long-term upward trend, while the rolling local anomaly bands show that many regions experienced repeated bursts of unusually high temperatures, especially in the later decades. Together, the graph highlights both the steady background rise in temperature and the growing frequency and intensity of local climate anomalies.
+
+## 3. Solution for Rising Temperature
+
+Addressing rising temperatures requires a combination of mitigation and adaptation:
+
+- Reduce greenhouse gas emissions by shifting to renewable energy and improving energy efficiency.
+- Strengthen regional climate resilience through better water management, land-use planning, and early-warning systems for heat anomalies.
+- Use data-driven models like this pipeline to monitor changes, target interventions, and validate the effectiveness of climate policies.
+
 ## Notes
 
 - The project uses a generated precipitation index because the raw dataset does not include a direct precipitation feature.
