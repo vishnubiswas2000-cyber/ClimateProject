@@ -146,7 +146,7 @@ The latest run reported a statistically significant climate shift with a very sm
 
 The chart titled **Multivatiate Climate Regression & Rolling Local Anomalies (1982-2012)** tells a story of persistent warming alongside region-specific deviations. The multivariate regression line captures the long-term upward trend, while the rolling local anomaly bands show that many regions experienced repeated bursts of unusually high temperatures, especially in the later decades. Together, the graph highlights both the steady background rise in temperature and the growing frequency and intensity of local climate anomalies.
 
-## 3. Solution for Rising Temperature
+## 2. Solution for Rising Temperature
 
 Addressing rising temperatures requires a combination of mitigation and adaptation:
 
