@@ -151,6 +151,7 @@ The chart titled **Multivatiate Climate Regression & Rolling Local Anomalies (19
 Addressing rising temperatures requires a combination of mitigation and adaptation:
 
 - Reduce greenhouse gas emissions by shifting to renewable energy and improving energy efficiency.
+- Focus on lowering the carbon footprint per person through cleaner transportation, reduced energy consumption, and sustainable consumption habits.
 - Strengthen regional climate resilience through better water management, land-use planning, and early-warning systems for heat anomalies.
 - Use data-driven models like this pipeline to monitor changes, target interventions, and validate the effectiveness of climate policies.
 
